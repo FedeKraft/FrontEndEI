@@ -7,7 +7,7 @@ const App = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:3001');
+        const ws = new WebSocket('ws://54.226.99.113:3001');
 
         ws.onopen = () => {
             console.log('Connected to WebSocket');
@@ -41,7 +41,7 @@ const App = () => {
 
         const fetchLogs = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/logs');
+                const response = await axios.get('http://54.226.99.113:3001/status');
                 setLogs(response.data);
             } catch (error) {
                 console.error('Error fetching logs', error);
@@ -55,7 +55,7 @@ const App = () => {
     const setAlarm = async (alarm, state) => {
         try {
             const updatedStatus = { ...status, [alarm]: state };
-            await axios.post('http://localhost:3001/set_alarm', updatedStatus);
+            await axios.post('http://54.226.99.113:3001/set_alarm', updatedStatus);
             setStatus(updatedStatus);
         } catch (error) {
             console.error(`Error setting ${alarm} state`, error);
