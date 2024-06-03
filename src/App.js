@@ -6,6 +6,8 @@ function App() {
     const [logs, setLogs] = useState([]);
     const [isAlarm1On, setIsAlarm1On] = useState(false);
     const [isAlarm2On, setIsAlarm2On] = useState(false);
+    const [isLaserOn, setIsLaserOn] = useState(false);
+    const [isMovementOn, setIsMovementOn] = useState(false);
 
     useEffect(() => {
         fetchStatus();
@@ -17,6 +19,8 @@ function App() {
                 setStatus(data.data);
                 setIsAlarm1On(data.data.alarm1);
                 setIsAlarm2On(data.data.alarm2);
+                setIsLaserOn(data.data.laser);
+                setIsMovementOn(data.data.movement);
             }
         };
 
@@ -29,6 +33,8 @@ function App() {
             setStatus(response.data);
             setIsAlarm1On(response.data.alarm1);
             setIsAlarm2On(response.data.alarm2);
+            setIsLaserOn(response.data.laser);
+            setIsMovementOn(response.data.movement);
         } catch (error) {
             console.error('Error fetching status', error);
         }
@@ -63,6 +69,26 @@ function App() {
         }
     };
 
+    const toggleLaser = async () => {
+        const newState = !isLaserOn;
+        try {
+            await axios.post('http://54.226.99.113:3001/set_alarm', { laser: newState });
+            setIsLaserOn(newState);
+        } catch (error) {
+            console.error('Error setting laser', error);
+        }
+    };
+
+    const toggleMovement = async () => {
+        const newState = !isMovementOn;
+        try {
+            await axios.post('http://54.226.99.113:3001/set_alarm', { movement: newState });
+            setIsMovementOn(newState);
+        } catch (error) {
+            console.error('Error setting movement sensor', error);
+        }
+    };
+
     return (
         <div>
             <h1>Alarm System</h1>
@@ -81,11 +107,25 @@ function App() {
                 </button>
             </div>
             <div>
+                <h2>Laser Sensor</h2>
+                <p>Status: {isLaserOn ? 'Active' : 'Inactive'}</p>
+                <button onClick={toggleLaser}>
+                    {isLaserOn ? 'Deactivate' : 'Activate'}
+                </button>
+            </div>
+            <div>
+                <h2>Movement Sensor</h2>
+                <p>Status: {isMovementOn ? 'Active' : 'Inactive'}</p>
+                <button onClick={toggleMovement}>
+                    {isMovementOn ? 'Deactivate' : 'Activate'}
+                </button>
+            </div>
+            <div>
                 <h2>Logs</h2>
                 <ul>
                     {Array.isArray(logs) ? (
                         logs.map((log, index) => (
-                            <li key={index}>{log.message}</li>
+                            <li key={index}>{log.timestamp} - {log.message}</li>
                         ))
                     ) : (
                         <li>{logs.message}</li>
