@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const App = () => {
-    const [status, setStatus] = useState(null); // Inicializa status como null
+    const [status, setStatus] = useState(null);
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const ws = new WebSocket('ws://54.226.99.113:3001');
+        const ws = new WebSocket('wss://54.226.99.113:3001');  // Cambiado a wss://
 
         ws.onopen = () => {
             console.log('Connected to WebSocket');
@@ -30,7 +30,7 @@ const App = () => {
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/status');
+                const response = await axios.get('https://54.226.99.113:3001/status');  // Cambiado a https://
                 setStatus(response.data);
                 setLoading(false);
             } catch (error) {
@@ -41,7 +41,7 @@ const App = () => {
 
         const fetchLogs = async () => {
             try {
-                const response = await axios.get('http://54.226.99.113:3001/status');
+                const response = await axios.get('https://54.226.99.113:3001/logs');  // Cambiado a https://
                 setLogs(response.data);
             } catch (error) {
                 console.error('Error fetching logs', error);
@@ -55,7 +55,7 @@ const App = () => {
     const setAlarm = async (alarm, state) => {
         try {
             const updatedStatus = { ...status, [alarm]: state };
-            await axios.post('http://54.226.99.113:3001/set_alarm', updatedStatus);
+            await axios.post('https://54.226.99.113:3001/set_alarm', updatedStatus);  // Cambiado a https://
             setStatus(updatedStatus);
         } catch (error) {
             console.error(`Error setting ${alarm} state`, error);
