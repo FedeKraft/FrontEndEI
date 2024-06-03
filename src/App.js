@@ -1,100 +1,99 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const App = () => {
-    const [status, setStatus] = useState(null); // Inicializa status como null
+function App() {
+    const [status, setStatus] = useState(null);
     const [logs, setLogs] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isAlarm1On, setIsAlarm1On] = useState(false);
+    const [isAlarm2On, setIsAlarm2On] = useState(false);
 
     useEffect(() => {
-        const ws = new WebSocket('ws://54.226.99.113:3001');
-
-        ws.onopen = () => {
-            console.log('Connected to WebSocket');
-        };
-
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            if (message.type === 'status') {
-                setStatus(message.data);
-            } else if (message.type === 'logs') {
-                setLogs(prevLogs => [...prevLogs, message.data]);
-            }
-        };
-
-        return () => {
-            ws.close();
-        };
-    }, []);
-
-    useEffect(() => {
-        const fetchStatus = async () => {
-            try {
-                const response = await axios.get('http://localhost:3001/status');
-                setStatus(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching status', error);
-                setLoading(false);
-            }
-        };
-
-        const fetchLogs = async () => {
-            try {
-                const response = await axios.get('http://54.226.99.113:3001/status');
-                setLogs(response.data);
-            } catch (error) {
-                console.error('Error fetching logs', error);
-            }
-        };
-
         fetchStatus();
         fetchLogs();
+        const ws = new WebSocket('ws://54.226.99.113:3001');
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'status') {
+                setStatus(data.data);
+                setIsAlarm1On(data.data.alarm1);
+                setIsAlarm2On(data.data.alarm2);
+            }
+        };
+
+        return () => ws.close();
     }, []);
 
-    const setAlarm = async (alarm, state) => {
+    const fetchStatus = async () => {
         try {
-            const updatedStatus = { ...status, [alarm]: state };
-            await axios.post('http://54.226.99.113:3001/set_alarm', updatedStatus);
-            setStatus(updatedStatus);
+            const response = await axios.get('http://54.226.99.113:3001/status');
+            setStatus(response.data);
+            setIsAlarm1On(response.data.alarm1);
+            setIsAlarm2On(response.data.alarm2);
         } catch (error) {
-            console.error(`Error setting ${alarm} state`, error);
+            console.error('Error fetching status', error);
         }
     };
 
-    if (loading) return <p>Loading...</p>;
+    const fetchLogs = async () => {
+        try {
+            const response = await axios.get('http://54.226.99.113:3001/logs');
+            setLogs(response.data);
+        } catch (error) {
+            console.error('Error fetching logs', error);
+        }
+    };
+
+    const toggleAlarm1 = async () => {
+        const newState = !isAlarm1On;
+        try {
+            await axios.post('http://54.226.99.113:3001/set_alarm', { alarm1: newState });
+            setIsAlarm1On(newState);
+        } catch (error) {
+            console.error('Error setting alarm 1', error);
+        }
+    };
+
+    const toggleAlarm2 = async () => {
+        const newState = !isAlarm2On;
+        try {
+            await axios.post('http://54.226.99.113:3001/set_alarm', { alarm2: newState });
+            setIsAlarm2On(newState);
+        } catch (error) {
+            console.error('Error setting alarm 2', error);
+        }
+    };
 
     return (
         <div>
             <h1>Alarm System</h1>
-            {status ? (
-                <>
-                    <div>
-                        <h2>Alarm 1</h2>
-                        <p>Status: {status.alarm1 ? 'Active' : 'Inactive'}</p>
-                        <button onClick={() => setAlarm('alarm1', !status.alarm1)}>
-                            {status.alarm1 ? 'Deactivate' : 'Activate'}
-                        </button>
-                    </div>
-                    <div>
-                        <h2>Alarm 2</h2>
-                        <p>Status: {status.alarm2 ? 'Active' : 'Inactive'}</p>
-                        <button onClick={() => setAlarm('alarm2', !status.alarm2)}>
-                            {status.alarm2 ? 'Deactivate' : 'Activate'}
-                        </button>
-                    </div>
-                </>
-            ) : <p>No status data available</p>}
+            <div>
+                <h2>Alarm 1</h2>
+                <p>Status: {isAlarm1On ? 'Active' : 'Inactive'}</p>
+                <button onClick={toggleAlarm1}>
+                    {isAlarm1On ? 'Deactivate' : 'Activate'}
+                </button>
+            </div>
+            <div>
+                <h2>Alarm 2</h2>
+                <p>Status: {isAlarm2On ? 'Active' : 'Inactive'}</p>
+                <button onClick={toggleAlarm2}>
+                    {isAlarm2On ? 'Deactivate' : 'Activate'}
+                </button>
+            </div>
             <div>
                 <h2>Logs</h2>
                 <ul>
-                    {logs.map((log, index) => (
-                        <li key={index}>{log.message} at {new Date(log.timestamp).toLocaleString()}</li>
-                    ))}
+                    {Array.isArray(logs) ? (
+                        logs.map((log, index) => (
+                            <li key={index}>{log.message}</li>
+                        ))
+                    ) : (
+                        <li>{logs.message}</li>
+                    )}
                 </ul>
             </div>
         </div>
     );
-};
+}
 
 export default App;
