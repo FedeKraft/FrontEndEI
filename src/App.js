@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './App.css';
 
 function App() {
     const [status, setStatus] = useState(null);
@@ -100,39 +101,39 @@ function App() {
     };
 
     return (
-        <div>
+        <div className="container">
             <h1>Alarm System</h1>
-            <div>
+            <div className="section">
                 <h2>Alarm 1</h2>
                 <p>Status: {isAlarm1On ? 'Active' : 'Inactive'}</p>
-                <button onClick={toggleAlarm1}>
+                <button className="button" onClick={toggleAlarm1}>
                     {isAlarm1On ? 'Deactivate' : 'Activate'}
                 </button>
             </div>
-            <div>
+            <div className="section">
                 <h2>Alarm 2</h2>
                 <p>Status: {isAlarm2On ? 'Active' : 'Inactive'}</p>
-                <button onClick={toggleAlarm2}>
+                <button className="button" onClick={toggleAlarm2}>
                     {isAlarm2On ? 'Deactivate' : 'Activate'}
                 </button>
             </div>
-            <div>
+            <div className="section">
                 <h2>Laser Sensor</h2>
                 <p>Status: {isLaserOn ? 'Active' : 'Inactive'}</p>
-                <button onClick={toggleLaser}>
+                <button className="button" onClick={toggleLaser}>
                     {isLaserOn ? 'Deactivate' : 'Activate'}
                 </button>
             </div>
-            <div>
+            <div className="section">
                 <h2>Movement Sensor</h2>
                 <p>Status: {isMovementOn ? 'Active' : 'Inactive'}</p>
-                <button onClick={toggleMovement}>
+                <button className="button" onClick={toggleMovement}>
                     {isMovementOn ? 'Deactivate' : 'Activate'}
                 </button>
             </div>
-            <div>
+            <div className="section">
                 <h2>Logs</h2>
-                <ul>
+                <ul className="logs">
                     {logs.map((log, index) => (
                         <li key={index}>{`${new Date(log.timestamp).toLocaleString()}: ${log.message}`}</li>
                     ))}
