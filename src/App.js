@@ -21,6 +21,8 @@ function App() {
                 setIsAlarm2On(data.data.alarm2);
                 setIsLaserOn(data.data.laser);
                 setIsMovementOn(data.data.movement);
+            } else if (data.type === 'logs') {
+                setLogs((prevLogs) => [...prevLogs, data.data]);
             }
         };
 
@@ -54,6 +56,7 @@ function App() {
         try {
             await axios.post('http://52.91.198.178:3001/set_alarm', { alarm1: newState });
             setIsAlarm1On(newState);
+            addLog(`Alarm 1 ${newState ? 'activated' : 'deactivated'}`);
         } catch (error) {
             console.error('Error setting alarm 1', error);
         }
@@ -64,6 +67,7 @@ function App() {
         try {
             await axios.post('http://52.91.198.178:3001/set_alarm', { alarm2: newState });
             setIsAlarm2On(newState);
+            addLog(`Alarm 2 ${newState ? 'activated' : 'deactivated'}`);
         } catch (error) {
             console.error('Error setting alarm 2', error);
         }
@@ -74,6 +78,7 @@ function App() {
         try {
             await axios.post('http://52.91.198.178:3001/set_alarm', { laser: newState });
             setIsLaserOn(newState);
+            addLog(`Laser sensor ${newState ? 'activated' : 'deactivated'}`);
         } catch (error) {
             console.error('Error setting laser', error);
         }
@@ -84,9 +89,14 @@ function App() {
         try {
             await axios.post('http://52.91.198.178:3001/set_alarm', { movement: newState });
             setIsMovementOn(newState);
+            addLog(`Movement sensor ${newState ? 'activated' : 'deactivated'}`);
         } catch (error) {
             console.error('Error setting movement', error);
         }
+    };
+
+    const addLog = (message) => {
+        setLogs((prevLogs) => [...prevLogs, { message, timestamp: new Date().toISOString() }]);
     };
 
     return (
@@ -123,13 +133,9 @@ function App() {
             <div>
                 <h2>Logs</h2>
                 <ul>
-                    {Array.isArray(logs) ? (
-                        logs.map((log, index) => (
-                            <li key={index}>{log.timestamp} - {log.message}</li>
-                        ))
-                    ) : (
-                        <li>{logs.message}</li>
-                    )}
+                    {logs.map((log, index) => (
+                        <li key={index}>{`${new Date(log.timestamp).toLocaleString()}: ${log.message}`}</li>
+                    ))}
                 </ul>
             </div>
         </div>
