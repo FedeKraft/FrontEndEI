@@ -12,7 +12,7 @@ function App() {
     useEffect(() => {
         fetchStatus();
         fetchLogs();
-        const ws = new WebSocket('ws://52.91.198.178:3001');
+        const ws = new WebSocket('ws://54.234.234.184:3001');
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === 'status') {
@@ -31,7 +31,7 @@ function App() {
 
     const fetchStatus = async () => {
         try {
-            const response = await axios.get('http://52.91.198.178:3001/status');
+            const response = await axios.get('http://54.234.234.184:3001/status');
             setStatus(response.data);
             setIsAlarm1On(response.data.alarm1);
             setIsAlarm2On(response.data.alarm2);
@@ -44,7 +44,7 @@ function App() {
 
     const fetchLogs = async () => {
         try {
-            const response = await axios.get('http://52.91.198.178:3001/logs');
+            const response = await axios.get('http://54.234.234.184:3001/logs');
             setLogs(response.data);
         } catch (error) {
             console.error('Error fetching logs', error);
@@ -54,7 +54,7 @@ function App() {
     const toggleAlarm1 = async () => {
         const newState = !isAlarm1On;
         try {
-            await axios.post('http://52.91.198.178:3001/set_alarm', { alarm1: newState });
+            await axios.post('http://54.234.234.184:3001/set_alarm', { alarm1: newState });
             setIsAlarm1On(newState);
             addLog(`Alarm 1 ${newState ? 'activated' : 'deactivated'}`);
         } catch (error) {
@@ -65,7 +65,7 @@ function App() {
     const toggleAlarm2 = async () => {
         const newState = !isAlarm2On;
         try {
-            await axios.post('http://52.91.198.178:3001/set_alarm', { alarm2: newState });
+            await axios.post('http://54.234.234.184:3001/set_alarm', { alarm2: newState });
             setIsAlarm2On(newState);
             addLog(`Alarm 2 ${newState ? 'activated' : 'deactivated'}`);
         } catch (error) {
@@ -76,7 +76,7 @@ function App() {
     const toggleLaser = async () => {
         const newState = !isLaserOn;
         try {
-            await axios.post('http://52.91.198.178:3001/set_alarm', { laser: newState });
+            await axios.post('http://54.234.234.184:3001/set_alarm', { laser: newState });
             setIsLaserOn(newState);
             addLog(`Laser sensor ${newState ? 'activated' : 'deactivated'}`);
         } catch (error) {
@@ -87,7 +87,7 @@ function App() {
     const toggleMovement = async () => {
         const newState = !isMovementOn;
         try {
-            await axios.post('http://52.91.198.178:3001/set_alarm', { movement: newState });
+            await axios.post('http://54.234.234.184:3001/set_alarm', { movement: newState });
             setIsMovementOn(newState);
             addLog(`Movement sensor ${newState ? 'activated' : 'deactivated'}`);
         } catch (error) {
