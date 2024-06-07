@@ -102,7 +102,7 @@ function App() {
 
     return (
         <div className="container">
-            <h1>Alarm System</h1>
+            <h1>Alarma Palooza</h1>
             <div className="section">
                 <h2>Alarm 1</h2>
                 <p>Status: {isAlarm1On ? 'Active' : 'Inactive'}</p>
