@@ -10,7 +10,7 @@ function App() {
     useEffect(() => {
         fetchStatus();
         fetchLogs();
-        const ws = new WebSocket('ws://54.226.99.113:3001');
+        const ws = new WebSocket('ws://52.91.198.178:3001');
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === 'status') {
@@ -25,7 +25,7 @@ function App() {
 
     const fetchStatus = async () => {
         try {
-            const response = await axios.get('http://54.226.99.113:3001/status');
+            const response = await axios.get('http://52.91.198.178:3001/status');
             setStatus(response.data);
             setIsAlarm1On(response.data.alarm1);
             setIsAlarm2On(response.data.alarm2);
@@ -36,7 +36,7 @@ function App() {
 
     const fetchLogs = async () => {
         try {
-            const response = await axios.get('http://54.226.99.113:3001/logs');
+            const response = await axios.get('http://52.91.198.178:3001/logs');
             setLogs(response.data);
         } catch (error) {
             console.error('Error fetching logs', error);
@@ -46,7 +46,7 @@ function App() {
     const toggleAlarm1 = async () => {
         const newState = !isAlarm1On;
         try {
-            await axios.post('http://54.226.99.113:3001/set_alarm', { alarm1: newState });
+            await axios.post('http://52.91.198.178:3001/set_alarm', { alarm1: newState });
             setIsAlarm1On(newState);
         } catch (error) {
             console.error('Error setting alarm 1', error);
@@ -56,7 +56,7 @@ function App() {
     const toggleAlarm2 = async () => {
         const newState = !isAlarm2On;
         try {
-            await axios.post('http://54.226.99.113:3001/set_alarm', { alarm2: newState });
+            await axios.post('http://52.91.198.178:3001/set_alarm', { alarm2: newState });
             setIsAlarm2On(newState);
         } catch (error) {
             console.error('Error setting alarm 2', error);
